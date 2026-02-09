@@ -28,14 +28,6 @@ To gain root access to the system.
 
 ---
 
-### Step 3: Identifying Vulnerabilities on Port 80
-- **Command:**
-  ```bash
-  nikto -port 80 -host <Target_IP>
-  ```
-
----
-
 ## Stage 2: Exploiting Identified Vulnerabilities
 
 ### Step 1: Targeting Samba on Port 443 with Metasploit
