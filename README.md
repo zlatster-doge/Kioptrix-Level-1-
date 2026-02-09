@@ -11,8 +11,6 @@ To gain root access to the system.
   ```bash
   sudo netdiscover -P -r <IP>
   ```
-- **Findings:**
-  - Identified the compromised system (displayed as “Intel Corporate” with IP ending in 240).
 
 ---
 
