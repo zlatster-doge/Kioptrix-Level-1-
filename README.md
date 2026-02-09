@@ -48,7 +48,7 @@ To gain root access to the system.
 ### Step 2: Looking Up Exploits for Samba 2.2
 - **Command:**
   ```bash
-  search samba 2.2
+  searchsploit samba 2.2
   ```
 - **Findings:**
   - Use `exploit/linux/samba/trans2open`
@@ -70,13 +70,7 @@ To gain root access to the system.
 
 ## Stage 3: Gaining Root Access
 
-### Step 1: Verifying Access Level
-- **Action:**
-  - Enumerate the system to confirm access level
-
----
-
-### Step 2: Performing Enumeration
+### Step 1: Performing Enumeration
 - **Commands:**
   ```bash
   whoami      # Find the current user
