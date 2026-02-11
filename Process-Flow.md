@@ -110,9 +110,3 @@ cat /etc/passwd
 - Demonstrated the impact of outdated services and poor patch management
 
 This assessment highlights the critical importance of maintaining updated services and securing network-exposed systems against known exploits.
-
-## References
-
-- Kioptrix Level 1 Walkthrough – Apache mod_ssl Privilege Escalation
-- How to Use a Reverse Shell in Metasploit
-- OpenLuck Exploit
